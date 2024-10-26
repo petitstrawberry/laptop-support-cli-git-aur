@@ -1,0 +1,24 @@
+name: Publish
+
+on:
+  repository_dispatch:
+    types: [publish_to_aur]
+
+jobs:
+  aur:
+    name: Publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Publish AUR package
+        uses: KSXGitHub/github-actions-deploy-aur@v2.5.0
+        with:
+          pkgname: laptop-support-cli-git
+          pkgbuild: ./PKGBUILD
+          commit_username: ${{ secrets.AUR_USERNAME }}
+          commit_email: ${{ secrets.AUR_EMAIL }}
+          ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+          commit_message: Bump version to ${{ github.event.client_payload.version }}
+          ssh_keyscan_types: rsa,ecdsa,ed25519
